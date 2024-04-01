@@ -1,10 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { UserService } from '../../service/user/index.service';
+import { UserService } from '../../module/user/index.service';
 
 @Controller('user')
 export class UserController {
   // 依赖注入
-  constructor(private readonly user_service: UserService<string>) { }
+  constructor(private readonly user_service: UserService) { }
 
   @Post()
   user(@Body() req) {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { AppController } from './app/app.controller'
-import { AppService } from './app/app.service'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigService, ConfigModule } from '@nestjs/config'
 import { getSqlConfigure } from 'src/config/db.config'

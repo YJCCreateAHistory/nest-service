@@ -1,10 +1,7 @@
 import {
   Column,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
 } from 'typeorm'
 import { Psd } from './psd.entity'

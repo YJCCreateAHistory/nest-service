@@ -2,10 +2,9 @@ import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { PermissionController } from '../../controller/permission/index.controller'
 import { InterceptorMiddleware } from 'src/middleware/interceptor.middleware'
 import { AuthController } from 'src/controller/permission/auth.controller'
-import { PermissionService } from 'src/service/permission/index.service'
-import { UserService } from 'src/service/user/index.service'
+import { PermissionService } from 'src/module/permission/index.service'
+import { UserService } from 'src/module/user/index.service'
 import { UserModule } from '../user/index.module'
-import { AuthService } from 'src/service/permission/auth.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from 'src/database/user.entity'
 import { Psd } from 'src/database/psd.entity'
@@ -17,7 +16,7 @@ import { Psd } from 'src/database/psd.entity'
   providers: [
     PermissionService,
     UserService,
-    AuthService,
+    PermissionService,
     { provide: 'HTTP_OPTION', useValue: 'auth' },
     { provide: 'HTTP_TOKEN', useValue: 'x-token' }
   ],

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { MaterialService } from '../../service/material/index.service'
+import { MaterialService } from '../../module/material/index.service'
 
 @Controller('material')
 export class MaterailController {

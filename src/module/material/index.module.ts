@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { MaterialService } from '../../service/material/index.service'
+import { MaterialService } from './index.service'
 import { MaterailController } from '../../controller/material/index.controller'
 
 const MaterialProvider = {

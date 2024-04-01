@@ -1,7 +1,6 @@
 import { Controller, Get, Inject } from '@nestjs/common'
-import { PermissionService } from '../../service/permission/index.service'
-import { UserService } from '../../service/user/index.service'
-import { AuthController } from './auth.controller';
+import { PermissionService } from '../../module/permission/index.service'
+import { UserService } from '../../module/user/index.service'
 
 @Controller('permission')
 export class PermissionController {
@@ -10,8 +9,8 @@ export class PermissionController {
   public x_token: string;
   // 依赖注入
   constructor(
-    private readonly auth_service: PermissionService<string>,
-    private readonly user_service: UserService<string>
+    private readonly auth_service: PermissionService,
+    private readonly user_service: UserService
   ) { }
 
   @Get("identity")
