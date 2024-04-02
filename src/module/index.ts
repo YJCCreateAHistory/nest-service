@@ -1,9 +1,7 @@
-import { PermissionModule } from './permission/index.module'
+import { AuthModule } from './auth/index.module'
 import { UserModule } from './user/index.module'
-import { MaterilModule } from './material/index.module'
 
 export default {
-  PermissionModule,
+  AuthModule,
   UserModule,
-  MaterilModule
 } as any

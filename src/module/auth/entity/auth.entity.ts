@@ -13,7 +13,7 @@ class AuthTreeItem {
 }
 
 @Entity()
-export class AuthTree {
+export class Auth {
   @PrimaryGeneratedColumn()
   id: number;
 

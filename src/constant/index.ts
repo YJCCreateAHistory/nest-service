@@ -6,31 +6,49 @@ export enum HTTP_CODE  {
   NOT_FOUND = 404,
   CONFLICT = 409,
   INTERNAL_SERVER_ERROR = 500,
+  NULL = 0,
+  EXIST = 1001,
 }
 
 export const HTTP_OPTION = {
   SUCCESS: {
-    code: HTTP_CODE.SUCCESS,
-    message: 'success'
+    error_code: HTTP_CODE.SUCCESS,
+    message: 'SUCCESS',
+    data: true
   },
   NO_AUTHORIZATION: {
-    code: HTTP_CODE.UNAUTHORIZED,
-    message: 'no_authorization'
+    error_code: HTTP_CODE.UNAUTHORIZED,
+    message: 'NO_AUTHORIZATION',
+    data: null
   },
   BAD_REQUEST: {
-    code: HTTP_CODE.BAD_REQUEST,
-    message: 'bad_request'
+    error_code: HTTP_CODE.BAD_REQUEST,
+    message: 'BAD_REQUEST',
+    data: null
   },
   NOT_FOUND: {
-    code: HTTP_CODE.NOT_FOUND,
-    message: 'not_found'
+    error_code: HTTP_CODE.NOT_FOUND,
+    message: 'NOT_FOUND',
+    data: null
   },
   CONFLICT: {
-    code: HTTP_CODE.CONFLICT,
-    message: 'conflict'
+    error_code: HTTP_CODE.CONFLICT,
+    message: 'CONFLICT',
+    data: null
   },
   INTERNAL_SERVER_ERROR: {
-    code: HTTP_CODE.INTERNAL_SERVER_ERROR,
-    message: 'internal_server_error'
+    error_code: HTTP_CODE.INTERNAL_SERVER_ERROR,
+    message: 'INTERNAL_SERVER_ERROR',
+    data: null
+  },
+  NULL: {
+    error_code: HTTP_CODE.NULL,
+    data: null,
+    message: 'SUCCESS'
+  },
+  EXIST: {
+    error_code: HTTP_CODE.EXIST,
+    data: null,
+    message: 'EXIST'
   }
 }

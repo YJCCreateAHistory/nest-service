@@ -1,32 +1,33 @@
+import { IsOptional, isEmpty } from 'class-validator'
 import {
   Column,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  CreateDateColumn,
   Entity,
-  OneToOne,
 } from 'typeorm'
-import { User } from './user.entity'
 
-@Entity('psd')
+@Entity('user')
 
-export class Psd {
+export class User {
 
   @PrimaryGeneratedColumn()
   id: number
 
   @Column({ length: 255 })
   uid: string
-  
+
   @Column({ length: 255 })
-  psd: string
+  name: string
+
+  @Column({ length: 255 })
+  phone_number: string
 
   @Column()
   create_time: Date
 
   @Column()
+  @IsOptional()
   update_time: Date
 
-  @OneToOne(() => User, user => user.psd)
-  user: User;
+  @Column({ length: 255 })
+  psd: string;
 }
