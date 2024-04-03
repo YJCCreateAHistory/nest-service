@@ -1,30 +1,30 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigService, ConfigModule } from '@nestjs/config'
-import { getSqlConfigure } from 'src/config/db.config'
-import { JwtModule } from '@nestjs/jwt'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ReporterModule } from './module/reporter/reporter.module';
 import { ReporterService } from './module/reporter/reporter.service';
 import { ReporterController } from './module/reporter/reporter.controller';
 import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler'
-import Modules from './module'
 import { SharedModule } from './shared'
+import { AuthModule } from './module/auth/index.module';
+import { UserModule } from './module/user/index.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { getSqlConfigure } from './config/db.config';
+import { RedisModule } from './module/redis/redis.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule, Modules.UserModule, Modules.AuthModule],
+      imports: [ConfigModule, UserModule, AuthModule],
       useFactory: () => getSqlConfigure(),
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-    }),
-    JwtModule.register({
-      secret: process.env.SECRET_KEY,
-      signOptions: { expiresIn: 3 * 24 * 60 * 60 * 1000 },
+      expandVariables: true,
+      // 指定多个 env 文件时，第一个优先级最高
+      envFilePath: ['.env.', `.env.${process.env.NODE_ENV}`, '.env'],
     }),
     ThrottlerModule.forRootAsync({
       useFactory: () => ({
@@ -34,10 +34,11 @@ import { SharedModule } from './shared'
         ],
       })
     }),
-    Modules.UserModule,
-    Modules.AuthModule,
+    UserModule,
+    AuthModule,
     ReporterModule,
-    SharedModule
+    SharedModule,
+    RedisModule
   ],
   controllers: [AppController, ReporterController],
   providers: [
