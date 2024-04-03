@@ -1,23 +1,22 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { User } from 'src/module/user/entity/user.entity'
+import { UserEntity } from 'src/module/user/entity/user.entity'
 import { IRegsiter, IResponse } from 'src/types/base';
 import { createTime } from 'src/utils/common';
 import { EntityManager, Repository } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid';
-import { HTTP_OPTION } from 'src/constant';
+import { Resp } from 'src/constant';
 
 @Injectable()
 export class UserService {
 
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
     private readonly entityManager: EntityManager,
   ) { }
 
-  @Inject()
-  isExistUserById(uid: string): Promise<User | any> {
+  isExistUserById(uid: string): Promise<UserEntity | any> {
     return this.usersRepository
       .createQueryBuilder('user')
       .where('user.uid = :uid', { uid })
@@ -25,16 +24,15 @@ export class UserService {
       .getMany()
   }
 
-  @Inject()
-  isExistUserByPhone(phone_number: string): Promise<User | any> {
+  isExistUserByPhone(phone_number: string): Promise<UserEntity | any> {
     return this.usersRepository
       .createQueryBuilder('user')
       .where('user.phone_number = :phone_number', { phone_number })
       .orderBy('user.name', 'ASC')
+      .select(['user.name', 'user.phone_number', 'user.uid', 'user.psd'])
       .getMany()
   }
 
-  @Inject()
   findUserlist() {
     return this.usersRepository
       .createQueryBuilder('user')
@@ -42,7 +40,6 @@ export class UserService {
       .getMany()
   }
 
-  @Inject()
   async regeister(regsiterInfo: IRegsiter): Promise<IResponse> {
 
     const { telephone, password, username } = regsiterInfo
@@ -56,7 +53,7 @@ export class UserService {
     const time = createTime()
 
     await this.entityManager.transaction(async (manager) => {
-      const u = manager.create(User, {
+      const u = manager.create(UserEntity, {
         uid: createUid,
         name: username,
         psd: password,
@@ -68,7 +65,7 @@ export class UserService {
       await manager.save(u)
     })
 
-    return HTTP_OPTION.SUCCESS
+    return Resp.SUCCESS
 
   }
 

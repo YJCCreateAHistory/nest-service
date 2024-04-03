@@ -1,30 +1,18 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { IsString, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsArray } from 'class-validator';
 
-class AuthTreeItem {
-  @IsString()
-  authName: string;
-
-  @IsString()
-  authId: string;
-
-  @IsString()
-  authType: string;
-}
-
-@Entity()
-export class Auth {
+@Entity('auth_tree')
+export class AuthTreeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @PrimaryGeneratedColumn('uuid')
   @IsString()
   uid: string;
 
-  @Column('jsonb')
+  @Column()
   @IsArray()
-  @ValidateNested({ each: true })
-  authTree: AuthTreeItem[];
+  authTree: string;
 
   @Column()
   @IsString()

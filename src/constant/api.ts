@@ -8,6 +8,7 @@ export const USER = {
 export const AUTH = {
   BASE: 'openAi/auth',
   INDEITY: 'identity',
-  LOGIN: 'ogin',
+  LOGIN: 'login',
   REGISTER: 'register',
+  PERMISSION: 'permission/:uid',
 }

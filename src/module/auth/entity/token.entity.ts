@@ -1,21 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
+import { UserEntity } from "src/module/user/entity/user.entity";
+import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne } from "typeorm";
+import { RefreshTokenEntity } from "./refresh.entity";
 
-@Entity() 
+@Entity('access_token') 
 
 export class TokenEntity extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @PrimaryGeneratedColumn('uuid')
+  @Column()
   uid: string;
-
-  @Column({ length: 255 })
-  value: string;
     
   @Column()
   accessToken: string;
 
   @Column()
-  create_time: string;
+  create_at: Date;
 
   @Column()
-  expired_time: string;
+  expired_at: Date;
+
+  @OneToOne(() => RefreshTokenEntity, refreshToken => refreshToken.accessToken, {
+    cascade: true,
+  })
+  refreshToken: RefreshTokenEntity
+
+  @JoinColumn({ name: 'uid' })
+  user: UserEntity
+
 }

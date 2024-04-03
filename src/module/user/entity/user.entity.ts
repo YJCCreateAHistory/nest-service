@@ -1,4 +1,5 @@
-import { IsOptional, isEmpty } from 'class-validator'
+import { IsOptional } from 'class-validator'
+import { Exclude } from 'class-transformer'
 import {
   Column,
   PrimaryGeneratedColumn,
@@ -7,9 +8,10 @@ import {
 
 @Entity('user')
 
-export class User {
+export class UserEntity {
 
   @PrimaryGeneratedColumn()
+  @Exclude()
   id: number
 
   @Column({ length: 255 })
@@ -21,13 +23,16 @@ export class User {
   @Column({ length: 255 })
   phone_number: string
 
+  @Exclude()
   @Column()
   create_time: Date
 
+  @Exclude()
   @Column()
   @IsOptional()
   update_time: Date
 
+  @Exclude()
   @Column({ length: 255 })
   psd: string;
 }

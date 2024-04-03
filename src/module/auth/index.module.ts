@@ -1,34 +1,55 @@
+import { TokenEntity } from 'src/module/auth/entity/token.entity';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { AuthController } from './index.controller'
 import { InterceptorMiddleware } from 'src/common/middleware/interceptor.middleware'
-import { AuthService } from 'src/module/auth/index.service'
-import { UserService } from 'src/module/user/index.service'
+import { AuthService } from './index.service'
+import { UserService } from '../user/index.service'
 import { UserModule } from '../user/index.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { User } from 'src/module/user/entity/user.entity'
-import { JwtService, JwtModule } from '@nestjs/jwt'
-import { PermissionController } from './controller/permission.controller'
 import { PermissionService } from './service/permission.service'
 import { TokenService } from './service/token.service';
-import { TokenController } from './controller/token.controller';
+import { RefreshTokenEntity } from './entity/refresh.entity'
+import { AuthTreeEntity } from './entity/auth.entity'
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), UserModule, JwtModule],
-  controllers: [AuthController, AuthController, PermissionController, TokenController],
-  providers: [
-    AuthService,
-    UserService,
-    JwtService,
-    PermissionService,
-    TokenService
+  imports: [
+    TypeOrmModule.forFeature(
+      [
+        AuthTreeEntity,
+        TokenEntity,
+        RefreshTokenEntity,
+      ]
+    ),
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: () => {
+        return {
+          secret: process.env.SECECT_KEY,
+          signOptions: {},
+        }
+      },
+      inject: [ConfigService],
+    }),
+    UserModule
   ],
-  exports: [TypeOrmModule, UserModule]
+  controllers: [AuthController],
+  providers: [
+    PermissionService,
+    AuthService,
+    TokenService,
+    UserService,
+    JwtService
+  ],
+  exports: [TypeOrmModule, PermissionService, TokenService]
 })
 
 export class AuthModule {
   // 中间件
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(InterceptorMiddleware).forRoutes(AuthController)
     consumer.apply(InterceptorMiddleware).
       exclude(
         {

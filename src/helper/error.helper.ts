@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
-import { HTTP_CODE, HTTP_OPTION } from '../constant'
+import { RespCode, Resp } from '../constant'
 
 export class ErrorBoundary extends HttpException {
 
-  constructor(error: HTTP_CODE | string) {
+  constructor(error: RespCode | string) {
 
     super(
       HttpException.createBody({
-        code: HTTP_OPTION[error].code,
-        message: HTTP_OPTION[error].message,
+        code: Resp[error].code,
+        message: Resp[error].message,
       }),
       HttpStatus.OK,
     )
