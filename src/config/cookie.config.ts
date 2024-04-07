@@ -16,3 +16,8 @@ export const JwtExpiredConfig = registerAs('secuity', () => {
 })
 
 export type JwtExpiredConfigType = ConfigType<typeof JwtExpiredConfig>
+
+export const Secret = {
+  jwtExpired: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
+  expired: 1000 * 60 * 60 * 24 * 7
+}

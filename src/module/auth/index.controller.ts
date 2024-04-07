@@ -1,11 +1,12 @@
 import { TokenService } from './service/token.service'
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common'
 import { AUTH } from 'src/constant/api'
 import { UserService } from '../user/index.service'
 import { Resp } from 'src/constant'
 import { AES_CBC_DECRYPT } from 'src/utils/encryption'
-import { Redis } from 'ioredis'
 import { generateTokenKey } from 'src/utils/redisKey'
+import { Secret } from 'src/config/cookie.config'
+import { RedisService } from '../redis/redis.service'
 
 enum INDEX {
   START = 0
@@ -16,7 +17,7 @@ export class AuthController {
   constructor(
     private readonly UserService: UserService,
     private readonly TokenService: TokenService,
-    private readonly redis: Redis
+    private readonly RedisService: RedisService
   ) { }
 
   @Get(AUTH.INDEITY)
@@ -27,10 +28,13 @@ export class AuthController {
   @Post(AUTH.LOGIN)
   async login(@Body() body) {
 
-    const expiredTime = 1000 * 60 * 60 * 24 * 7
+    const expiredTime = Secret.expired
     const { telephone, password } = body
+
+    // 对称解密
     const encryoptPsd = AES_CBC_DECRYPT(password, process.env.SECRET_KEY)
 
+    // 校验用户
     const isExist = await this.UserService.isExistUserByPhone(telephone)
 
     if (!isExist.length) {
@@ -38,10 +42,13 @@ export class AuthController {
     }
 
     if (isExist[INDEX.START].psd === encryoptPsd) {
+      // 生成accessToken和refreshToekn
       const token = await this.TokenService.builderAccessToken(isExist[INDEX.START].uid, telephone)
       
       // redis缓存token
-      await this.redis.set(generateTokenKey(isExist[0].uid), token.accessToken, 'EX', expiredTime)
+      await this.RedisService.setValue(generateTokenKey(isExist[0].uid), token.accessToken)
+      
+      // 去除psd
       delete isExist[INDEX.START].psd
       return {
         ...Resp.SUCCESS,

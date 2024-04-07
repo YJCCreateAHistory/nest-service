@@ -10,6 +10,7 @@ export class PermissionService {
     private AuthTreeEntity: Repository<AuthTreeEntity>,
   ) { }
   
+  // 获取权限树
   async getAuthTree(uid: string) {
     return await this.AuthTreeEntity
       .createQueryBuilder('auth_tree')

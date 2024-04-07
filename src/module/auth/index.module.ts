@@ -13,6 +13,8 @@ import { AuthTreeEntity } from './entity/auth.entity'
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { RedisModule } from '../redis/redis.module';
+import { RedisService } from '../redis/redis.service';
 
 @Module({
   imports: [
@@ -34,7 +36,8 @@ import { PassportModule } from '@nestjs/passport';
       },
       inject: [ConfigService],
     }),
-    UserModule
+    UserModule,
+    RedisModule
   ],
   controllers: [AuthController],
   providers: [
@@ -42,7 +45,8 @@ import { PassportModule } from '@nestjs/passport';
     AuthService,
     TokenService,
     UserService,
-    JwtService
+    JwtService,
+    RedisService
   ],
   exports: [TypeOrmModule, PermissionService, TokenService]
 })

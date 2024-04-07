@@ -6,6 +6,7 @@ import { RefreshTokenEntity } from '../entity/refresh.entity'
 import { v4 as uuidv4 } from 'uuid'
 import dayjs from 'dayjs'
 import { InjectRepository } from '@nestjs/typeorm'
+import { Secret } from 'src/config/cookie.config'
 
 @Injectable()
 export class TokenService {
@@ -17,8 +18,11 @@ export class TokenService {
     private TokenRepository: Repository<TokenEntity>,
     @InjectRepository(RefreshTokenEntity)
     private RefreshTokenRepository: Repository<RefreshTokenEntity>,
-  ) {}
+  ) { }
 
+  /**
+  * @desc 生成token
+  */
   async builderAccessToken(uid: string, phone: string) {
 
     const accessToken = await this.JwtService.signAsync({ uid, phone }, {
@@ -29,7 +33,7 @@ export class TokenService {
     repository.uid = uid
     repository.accessToken = accessToken
     repository.create_at = new Date()
-    repository.expired_at = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7)
+    repository.expired_at = Secret.jwtExpired
     await repository.save()
 
     const refreshToekn = await this.builderRefreshToken(repository)
@@ -40,7 +44,10 @@ export class TokenService {
     }
   }
 
-  async builderRefreshToken(accessToken: TokenEntity) { 
+  /**
+  * @desc 生成refreshToken
+  */
+  async builderRefreshToken(accessToken: TokenEntity) {
 
     const generateId = uuidv4()
     const refreshToekn = await this.JwtService.signAsync({ generateId }, {
@@ -50,13 +57,16 @@ export class TokenService {
     repository.uid = uuidv4()
     repository.refreshToken = refreshToekn
     repository.create_at = new Date()
-    repository.expired_at = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7)
+    repository.expired_at = Secret.jwtExpired
     repository.accessToken = accessToken
     await this.RefreshTokenRepository.save(repository)
     return refreshToekn
   }
 
-  async validateAccessToken(uid: string) { 
+  /**
+   * @desc 校验token
+  */
+  async validateAccessToken(uid: string) {
     const token = await this.TokenRepository.findOne({
       where: {
         uid: uid
@@ -67,7 +77,10 @@ export class TokenService {
     return Boolean(token)
   }
 
-  async removeAccessToken(uid: string) { 
+  /**
+  * @desc 移除token
+  */
+  async removeAccessToken(uid: string) {
     const token = await this.TokenRepository.findOne({
       where: {
         uid: uid
@@ -76,7 +89,10 @@ export class TokenService {
     await token.remove()
   }
 
-  async removeRefreshToken(uid: string) { 
+  /**
+  * @desc 移除refreshToken
+  */
+  async removeRefreshToken(uid: string) {
     const token = await this.RefreshTokenRepository.findOne({
       where: {
         uid: uid
@@ -85,7 +101,10 @@ export class TokenService {
     await token.remove()
   }
 
-  async refreshToken(uid: string, telephone: string) { 
+  /**
+   * @desc 刷新token
+  */
+  async refreshToken(uid: string, telephone: string) {
     const refreshToken = await this.RefreshTokenRepository.findOne({
       where: {
         uid: uid
